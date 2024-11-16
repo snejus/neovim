@@ -1373,7 +1373,7 @@ theend:
 /// a bit more verbose.
 /// Otherwise use curbuf->b_ffname to generate the undo file name.
 /// "hash[UNDO_HASH_SIZE]" must be the hash value of the buffer text.
-void u_read_undo(char *name, const uint8_t *hash, const char *orig_name FUNC_ATTR_UNUSED)
+void u_read_undo(char *name, const uint8_t *hash, const char *orig_name FUNC_ATTR_UNUSED, int force)
   FUNC_ATTR_NONNULL_ARG(2)
 {
   u_header_T **uhp_table = NULL;
@@ -1446,8 +1446,10 @@ void u_read_undo(char *name, const uint8_t *hash, const char *orig_name FUNC_ATT
     goto error;
   }
   linenr_T line_count = (linenr_T)undo_read_4c(&bi);
-  if (memcmp(hash, read_hash, UNDO_HASH_SIZE) != 0
-      || line_count != curbuf->b_ml.ml_line_count) {
+  if ((memcmp(hash, read_hash, UNDO_HASH_SIZE) != 0
+      || line_count != curbuf->b_ml.ml_line_count)
+      && !force)
+  {
     if (p_verbose > 0 || name != NULL) {
       if (name == NULL) {
         verbose_enter();

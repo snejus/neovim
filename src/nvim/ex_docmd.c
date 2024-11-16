@@ -6403,7 +6403,7 @@ static void ex_rundo(exarg_T *eap)
   uint8_t hash[UNDO_HASH_SIZE];
 
   u_compute_hash(curbuf, hash);
-  u_read_undo(eap->arg, hash, NULL);
+  u_read_undo(eap->arg, hash, NULL, eap->forceit);
 }
 
 /// ":redo".
